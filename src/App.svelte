@@ -5,6 +5,7 @@
 <style>
   .App {
     text-align: center;
+    font-family: sans-serif;
   }
 </style>
 
