@@ -4,6 +4,7 @@
 
   const WIDTH = 40;
   const HEIGHT = 30;
+  const SIZE = 20;
 
   // Helpers
   const makeRandomBoard = () =>
@@ -25,7 +26,7 @@
   let interval = 100;
   $: intervalHandle = resetInterval(interval);
 
-  let board = makeEmptyBoard();
+  let board = makeEmptyBoard(WIDTH, HEIGHT);
   $: cells = makeCells(board);
 
   // Handlers
@@ -37,6 +38,23 @@
   const clear = () => {
     board = makeEmptyBoard(WIDTH, HEIGHT);
   };
+  const handleClick = (event) => {
+    const rect = event.currentTarget.getBoundingClientRect();
+    const elemOffset = {
+        x: (rect.left + window.pageXOffset) - document.documentElement.clientLeft,
+        y: (rect.top + window.pageYOffset) - document.documentElement.clientTop,
+    };
+
+    const offsetX = event.clientX - elemOffset.x;
+    const offsetY = event.clientY - elemOffset.y;
+
+    const x = Math.floor(offsetX / SIZE);
+    const y = Math.floor(offsetY / SIZE);
+
+    if (x >= 0 && x <= board[0].length && y >= 0 && y <= board.length) {
+        board[y][x] = !board[y][x];
+    }
+    }
 </script>
 
 <style>
@@ -71,10 +89,10 @@
     <button class="button" on:click={random}>Random</button>
     <button class="button" on:click={clear}>Clear</button>
   </div>
-  <div class="Board" style="width: 800px; height: 600px; background-size: 20px 20px;">
+  <div class="Board" style="width: 800px; height: 600px; background-size: 20px 20px;" on:click={handleClick} >
     {#each cells as { x, y }}
       {#if board[y][x]}
-        <Cell size={20} left={x} top={y} />
+        <Cell size={SIZE} left={x} top={y} />
       {/if}
     {/each}
   </div>
